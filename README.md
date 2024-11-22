@@ -1,101 +1,72 @@
-# **An OCR Toolbox for Vietnamese Documents**
-<p align="left">
- <a href=""><img src="https://img.shields.io/badge/python-3.7+-aff.svg"></a>
-</p>
+Bộ công cụ OCR cho tài liệu tiếng Việt
 
-[![CodeFactor](https://www.codefactor.io/repository/github/kaylode/vnm-ocr-toolbox/badge)](https://www.codefactor.io/repository/github/kaylode/vnm-ocr-toolbox)
+<p align="left"> <a href=""><img src="https://img.shields.io/badge/python-3.7+-aff.svg"></a> </p>
 
-This toolbox provides a pipeline to do OCR in Vietnamese documents (such as receipts, personal id, licenses,...). 
-The project also support flexibility for adaptation.
+Bộ công cụ này cung cấp một quy trình xử lý OCR cho các tài liệu tiếng Việt (như hóa đơn, giấy tờ tùy thân, giấy phép,...). Dự án hỗ trợ khả năng tùy chỉnh linh hoạt để thích nghi với các yêu cầu cụ thể.
 
-:bookmark_tabs: More infomation:
-- Report: [link](https://github.com/kaylode/vnm-ocr-toolbox/blob/master/demo/report.pdf)
-- Youtube: [![Youtube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=DZ6tY0ICXlw)
+:bookmark_tabs: Thông tin thêm:
 
--------------------------------------------------------------
-<div align="center"> Invoice (from SROIE19 dataset)</div>
+Báo cáo: link
+Youtube:
 
-![Alt text](demo/invoice/fullpipeline.PNG)
+<div align="center">Hóa đơn (từ tập dữ liệu SROIE19)</div>
 
-<div align="center">Personal ID (image from internet)</div>
+<div align="center">Giấy tờ cá nhân (ảnh từ internet)</div>
 
-![Alt text](demo/ekyc/fullpipeline_cmnd.PNG)
+Chi tiết quy trình:
+Sử dụng thuật toán phát hiện cạnh Canny và tìm các đường viền (contour).
+Tách hóa đơn từ ảnh và chuẩn hóa kích thước.
+Sử dụng Pixel Aggregation Network (PAN) để phát hiện các vùng chứa văn bản từ hóa đơn, sau đó cắt ra.
+Dùng VietOCR để trích xuất văn bản từ các vùng đó, sau đó thực hiện sửa lỗi từ.
+Trích xuất thông tin từ văn bản.
+Notebook
+Notebook để huấn luyện PAN:
 
-**Pipeline in detail:**
-1. Use Canny Edge Detector and then detect contours.
-2. Extract receipt from image and normalize.
-3. Use Pixel Agreation Network (PAN) to detect text regions from extracted receipt, then crop these regions.
-4. Use VietOCR to extract texts from regions, then perform word correction.
-5. Retrieve information
+Notebook để huấn luyện Transformer OCR:
 
-## **Notebooks**
-- Notebook for training PAN: [![Notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kaylode/vnm-ocr-toolbox/blob/master/demo/notebooks/[vnm_ocr_toolbox]_Train_PAN_for_Text_Detection.ipynb)
+Notebook để huấn luyện PhoBERT:
 
-- Notebook for training Transformer OCR: [![Notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kaylode/vnm-ocr-toolbox/blob/master/demo/notebooks/[vnm_ocr_toolbox]_Train_OCR.ipynb)
+Notebook để suy luận:
 
-- Notebook for training PhoBERT: [![Notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kaylode/vnm-ocr-toolbox/blob/master/demo/notebooks/[vnm_ocr_toolbox]_Train_PhoBERT_for_Text_Classification.ipynb)
+Quy trình tổng quát
 
-- Notebook for inference: [![Notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kaylode/vnm-ocr-toolbox/blob/master/demo/notebooks/[vnm_ocr_toolbox]_Inference.ipynb)
+<div align="center">Quy trình chính</div>
 
+<div align="center">Lưu đồ xử lý</div>
 
-## **Pipeline**
+Quy trình bao gồm hai giai đoạn (cũng có thể chạy riêng giai đoạn thứ hai):
 
-<div align="center"> Main Pipeline</div>
+Giai đoạn đầu: Phát hiện và chỉnh sửa tài liệu trong ảnh, sau đó xác định hướng tốt nhất của tài liệu thông qua "lưu đồ xử lý".
+Giai đoạn hai: Chuyển ảnh đã xoay qua toàn bộ "lưu đồ xử lý" để trích xuất thông tin.
+Tập dữ liệu
+MCOCR-2020 (cho phát hiện)
+SROIE19 (cho OCR và trích xuất thông tin)
+<img height="400" alt="screen" src="demo/data samples/mcocr_public_145013atlmq.jpg"> <img width="400" alt="screen" src="demo/data samples/mcocr_public_145013bcovr.jpg"> <img height="400" alt="screen" src="demo/data samples/mcocr_public_145014ckynq.jpg">
+<img alt="screen" src="demo/data samples/sroie19_1.png"> <img alt="screen" src="demo/data samples/sroie19_2.png"> <img alt="screen" src="demo/data samples/sroie19_3.jpg">
+Trọng số đã huấn luyện sẵn
+Trọng số PAN trên SROIE19:
+Mô hình Kích thước ảnh Trọng số MAP@0.5 Độ chính xác pixel IOU
+PAN (cơ bản) 640 x 640 link 0.71 0.95 0.91
+PAN (xoay) 640 x 640 link 0.66 0.93 0.88
+Trọng số OCR trên MCOCR2021:
+Mô hình Trọng số Độ chính xác (chuỗi đầy đủ) Độ chính xác (kí tự)
+Transformer OCR link 0.890 0.981
+Trọng số PhoBERT trên MCOCR2021:
+Mô hình Trọng số Độ chính xác (huấn luyện) Độ chính xác (kiểm tra)
+PhoBERT link 0.978 0.924
+Suy luận
+Cài đặt các phụ thuộc: pip install -r requirements.txt
 
-![Alt Text](demo/pipeline1.png)
+Chạy toàn bộ quy trình:
 
-<div align="center"> Process Flow Block</div>
-
-![Alt Text](demo/pipeline2.png)
-
-There are two stages (can also run in second stage only):
-  - The first stage is to detect and rectify document in the image, then forward through the "process flow" to find the best orientation of the document.
-  - The second stage is to forward the rotated image through the entire "process flow" normally to retrieve information
-
-## **Datasets**
-- [MCOCR-2020](https://drive.google.com/file/d/1bckFiNBMcr2BH1zCJl-MhV9l1AlAmtlQ/view?usp=sharing) (for detection)
-- [SROIE19](https://drive.google.com/file/d/1bJunF1BZvVI5kx-AHCOkQXIKG7q0FkD5/view?usp=sharing) (for ocr and retrieval)
-
-| | | |
-|:-------------------------:|:-------------------------:|:-------------------------:|
-|<img height="400" alt="screen" src="demo/data samples/mcocr_public_145013atlmq.jpg"> | <img width="400" alt="screen" src="demo/data samples/mcocr_public_145013bcovr.jpg"> | <img height="400" alt="screen" src="demo/data samples/mcocr_public_145014ckynq.jpg"> |
-|<img  alt="screen" src="demo/data samples/sroie19_1.png"> | <img  alt="screen" src="demo/data samples/sroie19_2.png"> | <img  alt="screen" src="demo/data samples/sroie19_3.jpg"> |
-
-## **Pretrained weights**
-- Pretrained PAN weights on SROIE19:
-
-Model | Image Size | Weights | MAP@0.5 | Pixel accuracy | IOU
---- | --- | --- | --- | --- | --- 
-PAN (baseline) | 640 x 640 | [link](https://drive.google.com/file/d/1-Nj8TSM_eqZDZzRArZjWPcVCtl1l2uQP/view?usp=sharing) | 0.71 | 0.95 | 0.91
-PAN (rotation) | 640 x 640 | [link](https://drive.google.com/file/d/1NIIGWdGdCD9c2TPqyPoiRao2tR69BXgN/view?usp=sharing) | 0.66 | 0.93 | 0.88
-
-- Pretrained OCR weights on MCOCR2021: 
-
-Model | Weights | Accuracy (full seq) | Accuracy (per char)
---- | --- | --- | --- 
-Transformer OCR | [link](https://drive.google.com/drive/folders/1JgCVtxA8hfUl1E4JqS3moPB_7b8lhL0w?usp=sharing) | 0.890 | 0.981
-
-- Pretrained PhoBERT weights on MCOCR2021: 
-
-Model | Weights | Accuracy (train) | Accuracy (val)
---- | --- | --- | --- 
-PhoBERT | [link](https://drive.google.com/file/d/1v4GQPg4Jx5FWvqJ-2k9YCxEd6iFdlXXa/view?usp=sharing) | 0.978 | 0.924
-
-
-## **Inference**
-- Install dependencies
-```pip install -r requirements.txt```
-
-- Full pipeline:
-```
-python run.py --input=<input image> --output=<output folder>
-```
- - **Extra Parameters**:
-    - ***--debug***:              whether to save output of each step
-    - ***--find_best_rotation***: whether to find best rotation first
-    - ***--do_retrieve***:        whether to retrieve information (based on class defined in config) or ocr only
-
-## References
-- https://github.com/WenmuZhou/PAN.pytorch
-- https://github.com/andrewdcampbell/OpenCV-Document-Scanner
-- https://github.com/pbcquoc/vietocr
+css
+Copy code
+python run.py --input=<ảnh đầu vào> --output=<thư mục đầu ra>
+Tham số bổ sung:
+--debug: Lưu đầu ra của từng bước
+--find_best_rotation: Xác định hướng tốt nhất trước
+--do_retrieve: Trích xuất thông tin (dựa trên lớp định nghĩa trong config) hoặc chỉ OCR
+Tài liệu tham khảo
+https://github.com/WenmuZhou/PAN.pytorch
+https://github.com/andrewdcampbell/OpenCV-Document-Scanner
+https://github.com/pbcquoc/vietocr
