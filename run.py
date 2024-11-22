@@ -112,6 +112,7 @@ class Pipeline:
         
         texts = self.ocr_model.predict_folder(img_paths, return_probs=False)
         texts = self.correction(texts, return_score=False)
+        print(texts)
         
         if self.do_retrieve:
             preds, probs = self.retrieval(texts)

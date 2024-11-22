@@ -13,7 +13,7 @@ from .kmeans import km
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
-if subprocess.call(['make', '-C', BASE_DIR]) != 0:  # return value
+if subprocess.call(['python', 'setup.py', 'build_ext', '--inplace'], cwd=BASE_DIR) != 0:  # return value
     raise RuntimeError('Cannot compile pse: {}'.format(BASE_DIR))
 
 

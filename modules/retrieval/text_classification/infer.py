@@ -69,12 +69,13 @@ class PhoBERT:
             tmp_path = os.path.join(CACHE_DIR, "bert_weight.pth")
             download_pretrained_weights("phobert_mcocr", tmp_path)
             weight_path = tmp_path
-        meta_data = torch.load(weight_path)
+        meta_data = torch.load(weight_path, map_location=torch.device('cpu'))
         self.cfg = meta_data["config"]
         model_state = meta_data["model_state_dict"]
 
-        self.model = get_instance(self.cfg["model"]).cuda()
-        self.model.load_state_dict(model_state)
+        # self.model = get_instance(self.cfg["model"]).cuda()
+        self.model = get_instance(self.cfg["model"])
+        self.model.load_state_dict(model_state, strict=False)
 
     def __call__(self, texts):
         dataset = MCOCRDataset_from_list(
@@ -90,7 +91,7 @@ class PhoBERT:
 
         with torch.no_grad():
             preds, probs = inference(
-                model=self.model, dataloader=dataloader, device=torch.device("cuda:0")
+                model=self.model, dataloader=dataloader, device=torch.device("cpu")
             )
 
         labels = [self.idx_mapping[x] for x in preds]

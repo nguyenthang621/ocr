@@ -28,7 +28,7 @@ def inference(model, dataloader, device):
 
 
 if __name__ == "__main__":
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
     meta_data_path = sys.argv[1]  #'model.pth'
     meta_data = torch.load(meta_data_path)
     cfg = meta_data["config"]

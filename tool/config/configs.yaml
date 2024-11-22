@@ -14,10 +14,6 @@ retr_mode: "all"
 correction_mode: "ed"
 bert_weight: "./weights/phobert_report.pth"
 dictionary_csv: "./modules/retrieval/heuristic/custom-dictionary.csv"
-retr_classes: [
-  "SELLER",
-  "ADDRESS",
-  "TIMESTAMP",
-  "TOTAL_COST",
-  "NONE"
-]
+retr_classes:
+  # ["FULL_NAME", "NATIONALITY", "IS_ALLOWED", "TIMESTAMP", "NONE"]
+  ["SELLER", "ADDRESS", "TIMESTAMP", "TOTAL_COST", "NONE"]

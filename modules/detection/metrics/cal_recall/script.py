@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 from . import rrc_evaluation_funcs
-import Polygon as plg
+# import Polygon as plg
 import numpy as np
 
 
@@ -67,7 +67,7 @@ def evaluate_method(gtFilePath, submFilePath, evaluationParams):
         resBoxes[0, 3] = int(points[6])
         resBoxes[0, 7] = int(points[7])
         pointMat = resBoxes[0].reshape([2, 4]).T
-        return plg.Polygon(pointMat)
+        # return plg.Polygon(pointMat)
 
     def rectangle_to_polygon(rect):
         resBoxes = np.empty([1, 8], dtype='int32')
@@ -82,7 +82,7 @@ def evaluate_method(gtFilePath, submFilePath, evaluationParams):
 
         pointMat = resBoxes[0].reshape([2, 4]).T
 
-        return plg.Polygon(pointMat)
+        # return plg.Polygon(pointMat)
 
     def rectangle_to_points(rect):
         points = [int(rect.xmin), int(rect.ymax), int(rect.xmax), int(rect.ymax), int(rect.xmax), int(rect.ymin),

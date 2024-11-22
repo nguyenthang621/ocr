@@ -11,6 +11,12 @@ from .utils.util import order_points_clockwise
 from .post_processing import decode_clip
 import argparse
 
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+print("cuda:::::::::::")
+print(torch.cuda.is_available())
+
 def sort_box(boxes):
     sorted_boxes = []
     for box in boxes:
@@ -83,18 +89,19 @@ def crop_box(img, boxes, out_folder, sort=True):
 
     return boxes
 
+
 class PAN:
     def __init__(self, config, model_path=None, state_dict=None):
         
-        self.device = torch.device("cuda")
+        self.device = torch.device("cpu")
         self.net = get_model(config.model)
         if model_path is not None:
-            checkpoint = torch.load(model_path, map_location=self.device)
+            checkpoint = torch.load(model_path, map_location=torch.device('cpu'), weights_only=True)
             self.net.load_state_dict(checkpoint['state_dict'])
         elif state_dict is not None:
             self.net.load_state_dict(state_dict)
             
-        self.net.to(self.device)
+        self.net.to(self.device)  # Đảm bảo rằng mô hình được tải lên CPU
         self.net.eval()
 
     def predict(self, 
@@ -114,13 +121,11 @@ class PAN:
 
         tensor = tf.ToTensor()(img)
         tensor = tensor.unsqueeze_(0)
-        tensor = tensor.to(self.device)
+        tensor = tensor.to(self.device)  # Chuyển tensor sang CPU
 
         with torch.no_grad():
-            torch.cuda.synchronize(self.device)
             start = time.time()
             preds = self.net(tensor)[0]
-            torch.cuda.synchronize(self.device)
 
             preds, boxes_list = decode_clip(preds)
             scale = (preds.shape[1] / w, preds.shape[0] / h)
@@ -134,6 +139,7 @@ class PAN:
         return preds, boxes_list, t
 
 
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     from utils.util import show_img, draw_bbox
@@ -145,7 +151,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     config = Config(os.path.join('config','configs.yaml'))
-    os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_devices
+    # os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_devices
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
     
 
     model = PAN(config, model_path=args.weight)

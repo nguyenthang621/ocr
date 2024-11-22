@@ -7,7 +7,7 @@
 from .pyimagesearch import transform
 from .pyimagesearch import imutils
 from scipy.spatial import distance as dist
-from matplotlib.patches import Polygon
+# from matplotlib.patches import Polygon
 import numpy as np
 import matplotlib.pyplot as plt
 import itertools
